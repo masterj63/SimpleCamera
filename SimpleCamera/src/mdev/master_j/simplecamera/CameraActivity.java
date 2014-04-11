@@ -89,6 +89,15 @@ public class CameraActivity extends Activity {
 	}
 
 	@Override
+	public boolean onPrepareOptionsMenu(Menu menu) {
+		super.onPrepareOptionsMenu(menu);
+		MenuItem item = menu.findItem(R.id.item_save);
+		// MenuItem item = (MenuItem) findViewById(R.id.item_save);
+		item.setEnabled(photoBitmap != null);
+		return true;
+	}
+
+	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.item_save:

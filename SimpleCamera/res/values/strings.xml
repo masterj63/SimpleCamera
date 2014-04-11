@@ -3,5 +3,6 @@
 
     <string name="app_name">SimpleCamera</string>
     <string name="description_photo">Photograph</string>
-
+    <string name="label_button_take_photo">Take photo</string>
+    
 </resources>

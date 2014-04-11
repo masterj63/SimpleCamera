@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -20,6 +21,8 @@ import android.widget.Toast;
 public class CameraActivity extends Activity {
 	// TODO generalize message toasting
 	private static final int IMAGE_TAKEN_REQUEST_CODE = 1;
+
+	private static final String KEY_BITMAP_PHOTO = "mdev.master_j.simplecamera.CameraActivity.KEY_BITMAP_PHOTO";
 
 	private Bitmap photoBitmap;
 
@@ -63,6 +66,19 @@ public class CameraActivity extends Activity {
 
 		Button takePhotoButton = (Button) findViewById(R.id.button_take_photo);
 		takePhotoButton.setOnClickListener(onTakePhotoButtonClickListener);
+
+		if (savedInstanceState != null) {
+			Parcelable parcelable = savedInstanceState.getParcelable(KEY_BITMAP_PHOTO);
+			if (parcelable != null)
+				photoBitmap = (Bitmap) parcelable;
+			updateUI();
+		}
+	}
+
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		outState.putParcelable(KEY_BITMAP_PHOTO, photoBitmap);
 	}
 
 	@Override

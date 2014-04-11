@@ -17,7 +17,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-public class MainActivity extends Activity {
+public class CameraActivity extends Activity {
 	// TODO generalize message toasting
 	private static final int IMAGE_TAKEN_REQUEST_CODE = 1;
 
@@ -26,14 +26,14 @@ public class MainActivity extends Activity {
 		public void onClick(View v) {
 			File albumFile = getAlbumDirectory();
 			if (!albumFile.exists() && !albumFile.mkdirs()) {
-				Toast.makeText(MainActivity.this, "Cannot create " + albumFile.getAbsolutePath(), Toast.LENGTH_SHORT)
+				Toast.makeText(CameraActivity.this, "Cannot create " + albumFile.getAbsolutePath(), Toast.LENGTH_SHORT)
 						.show();
 				return;
 			}
 
 			Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 			if (intent.resolveActivity(getPackageManager()) == null) {
-				Toast.makeText(MainActivity.this, "Cannot find default camera app", Toast.LENGTH_SHORT).show();
+				Toast.makeText(CameraActivity.this, "Cannot find default camera app", Toast.LENGTH_SHORT).show();
 				return;
 			}
 			startActivityForResult(intent, IMAGE_TAKEN_REQUEST_CODE);

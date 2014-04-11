@@ -2,7 +2,10 @@
 <resources>
 
     <string name="app_name">SimpleCamera</string>
+    
     <string name="description_photo">Photograph</string>
     <string name="label_button_take_photo">Take photo</string>
+    
+    <string name="label_item_save">Take photo</string>
     
 </resources>

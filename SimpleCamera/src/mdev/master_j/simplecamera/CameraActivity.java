@@ -21,6 +21,8 @@ public class CameraActivity extends Activity {
 	// TODO generalize message toasting
 	private static final int IMAGE_TAKEN_REQUEST_CODE = 1;
 
+	private Bitmap photoBitmap;
+
 	OnClickListener onTakePhotoButtonClickListener = new OnClickListener() {
 		@Override
 		public void onClick(View v) {
@@ -44,10 +46,9 @@ public class CameraActivity extends Activity {
 		if (resultCode == RESULT_OK) {
 			if (requestCode == IMAGE_TAKEN_REQUEST_CODE) {
 				Bundle extras = data.getExtras();
-				Bitmap bitmap = (Bitmap) extras.get("data");
+				photoBitmap = (Bitmap) extras.get("data");
 
-				ImageView photoImageView = (ImageView) findViewById(R.id.image_view_photo);
-				photoImageView.setImageBitmap(bitmap);
+				updateUI();
 			}
 		} else if (resultCode == RESULT_CANCELED)
 			Toast.makeText(this, "Cancelled", Toast.LENGTH_SHORT).show();
@@ -86,6 +87,11 @@ public class CameraActivity extends Activity {
 	private File getAlbumDirectory() {
 		String albumName = getString(R.string.name_album);
 		return new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), albumName);
+	}
+
+	private void updateUI() {
+		ImageView photoImageView = (ImageView) findViewById(R.id.image_view_photo);
+		photoImageView.setImageBitmap(photoBitmap);
 	}
 
 }

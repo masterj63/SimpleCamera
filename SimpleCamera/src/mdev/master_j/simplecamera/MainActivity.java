@@ -5,7 +5,6 @@ import java.io.File;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -31,11 +30,6 @@ public class MainActivity extends Activity {
 						.show();
 				return;
 			}
-
-			String pictureName = getString(R.string.name_picture);
-			String picturePath = albumFile.getAbsolutePath() + "/" + pictureName;
-			File pictureFile = new File(picturePath);
-			Uri pictureUri = Uri.fromFile(pictureFile);
 
 			Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 			if (intent.resolveActivity(getPackageManager()) == null) {

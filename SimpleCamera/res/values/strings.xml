@@ -6,7 +6,7 @@
     <string name="description_photo">Photograph</string>
     <string name="label_button_take_photo">Take photo</string>
     
-    <string name="label_item_save">Take photo</string>
+    <string name="label_item_save">Save photo</string>
     
     <string name="name_album">MdevCam</string>
     <string name="name_picture">photo.jpg</string>

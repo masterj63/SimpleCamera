@@ -1,10 +1,13 @@
 package mdev.master_j.simplecamera;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Parcelable;
@@ -29,13 +32,6 @@ public class CameraActivity extends Activity {
 	OnClickListener onTakePhotoButtonClickListener = new OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			File albumFile = getAlbumDirectory();
-			if (!albumFile.exists() && !albumFile.mkdirs()) {
-				Toast.makeText(CameraActivity.this, "Cannot create " + albumFile.getAbsolutePath(), Toast.LENGTH_SHORT)
-						.show();
-				return;
-			}
-
 			Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 			if (intent.resolveActivity(getPackageManager()) == null) {
 				Toast.makeText(CameraActivity.this, "Cannot find default camera app", Toast.LENGTH_SHORT).show();
@@ -99,14 +95,41 @@ public class CameraActivity extends Activity {
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-		case R.id.item_save:
-			// TODO save photo
-			return true;
+		if (item.getItemId() == R.id.item_save) {
+			File albumFile = getAlbumDirectory();
+			if (!albumFile.exists() && !albumFile.mkdirs()) {
+				Toast.makeText(CameraActivity.this, "Cannot create " + albumFile.getAbsolutePath(), Toast.LENGTH_SHORT)
+						.show();
+				return true;
+			}
 
-		default:
-			return super.onOptionsItemSelected(item);
+			String pictureName = getString(R.string.name_picture);
+			File file = new File(albumFile.getAbsolutePath() + "/" + pictureName);
+			FileOutputStream outStream = null;
+			boolean success = false;
+			try {
+				outStream = new FileOutputStream(file);
+				photoBitmap.compress(Bitmap.CompressFormat.JPEG, 100, outStream);
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			} finally {
+				try {
+					outStream.close();
+					success = true;
+				} catch (Throwable t) {
+				}
+			}
+
+			if (success) {
+				Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+				intent.setData(Uri.fromFile(file));
+				sendBroadcast(intent);
+				Toast.makeText(this, "Saved", Toast.LENGTH_SHORT).show();
+			} else
+				Toast.makeText(this, "File saving error", Toast.LENGTH_SHORT).show();
 		}
+
+		return super.onOptionsItemSelected(item);
 	}
 
 	private File getAlbumDirectory() {

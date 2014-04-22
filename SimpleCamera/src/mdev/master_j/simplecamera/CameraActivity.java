@@ -8,6 +8,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Parcelable;
@@ -22,7 +23,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 public class CameraActivity extends Activity {
-	// TODO generalize message toasting
+	// TODO think of generalizing message toasting
 	private static final int IMAGE_TAKEN_REQUEST_CODE = 1;
 
 	private static final String KEY_BITMAP_PHOTO = "mdev.master_j.simplecamera.CameraActivity.KEY_BITMAP_PHOTO";
@@ -88,20 +89,24 @@ public class CameraActivity extends Activity {
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		super.onPrepareOptionsMenu(menu);
 		MenuItem item = menu.findItem(R.id.item_save);
-		// MenuItem item = (MenuItem) findViewById(R.id.item_save);
 		item.setEnabled(photoBitmap != null);
 		return true;
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		if (item.getItemId() == R.id.item_save) {
+		if (item.getItemId() == R.id.item_save)
+			new SaveAsyncTask().execute();
+
+		return super.onOptionsItemSelected(item);
+	}
+
+	private class SaveAsyncTask extends AsyncTask<Void, Void, String> {
+		@Override
+		protected String doInBackground(Void... params) {
 			File albumFile = getAlbumDirectory();
-			if (!albumFile.exists() && !albumFile.mkdirs()) {
-				Toast.makeText(CameraActivity.this, "Cannot create " + albumFile.getAbsolutePath(), Toast.LENGTH_SHORT)
-						.show();
-				return true;
-			}
+			if (!albumFile.exists() && !albumFile.mkdirs())
+				return "Cannot create " + albumFile.getAbsolutePath();
 
 			String pictureName = getString(R.string.name_picture);
 			File file = new File(albumFile.getAbsolutePath() + "/" + pictureName);
@@ -124,12 +129,16 @@ public class CameraActivity extends Activity {
 				Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
 				intent.setData(Uri.fromFile(file));
 				sendBroadcast(intent);
-				Toast.makeText(this, "Saved", Toast.LENGTH_SHORT).show();
+				return "Saved";
 			} else
-				Toast.makeText(this, "File saving error", Toast.LENGTH_SHORT).show();
+				return "File saving error";
 		}
 
-		return super.onOptionsItemSelected(item);
+		@Override
+		protected void onPostExecute(String result) {
+			Toast.makeText(CameraActivity.this, result, Toast.LENGTH_SHORT).show();
+			super.onPostExecute(result);
+		}
 	}
 
 	private File getAlbumDirectory() {
